@@ -1,5 +1,5 @@
-#ifndef _236360_3_
-#define _236360_3_
+#ifndef _236360_3_OUTPUT_
+#define _236360_3_OUTPUT_
 
 #include <vector>
 #include <string>
@@ -23,4 +23,4 @@ namespace output
     void errorByteTooLarge(int lineno, const string &value);
 }
 
-#endif
+#endif // _236360_3_OUTPUT_

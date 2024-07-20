@@ -68,30 +68,30 @@ Call:
     ;
 
 Type:
-    INT { printProductionRule(16); }
-    | BYTE { printProductionRule(17); }
-    | BOOL { printProductionRule(18); }
+    INT { $$ = new Type($1); }
+    | BYTE { $$ = new Type($1); }
+    | BOOL { $$ = new Type($1); }
     ;
 
 Exp:
-    LPAREN Exp RPAREN { printProductionRule(19); }
-    | Exp PLUS Exp { printProductionRule(20); }
-    | Exp MINUS Exp { printProductionRule(20); }
-    | Exp MULT Exp { printProductionRule(20); }
-    | Exp DIV Exp { printProductionRule(20); }
-    | ID { printProductionRule(21); }
-    | Call { printProductionRule(22); }
-    | NUM { printProductionRule(23); }
-    | NUM B { printProductionRule(24); }
-    | STRING { printProductionRule(25); }
-    | TRUE { printProductionRule(26); }
-    | FALSE { printProductionRule(27); }
-    | NOT Exp { printProductionRule(28); }
-    | Exp AND Exp { printProductionRule(29); }
-    | Exp OR Exp { printProductionRule(30); }
-    | Exp EQUALITYOP Exp { printProductionRule(31); }
-    | Exp RELATIONALOP Exp { printProductionRule(31); }
-    | LPAREN Type RPAREN Exp { printProductionRule(32); }
+    LPAREN Exp RPAREN {}
+    | Exp PLUS Exp {}
+    | Exp MINUS Exp {}
+    | Exp MULT Exp {}
+    | Exp DIV Exp {}
+    | ID { $$ = new Exp($1, "id"); }
+    | Call {}
+    | NUM { $$ = new Exp($1, "num"); }
+    | NUM B {}
+    | STRING { $$ = new Exp($1); }
+    | TRUE { $$ = new Exp($1); }
+    | FALSE { $$ = new Exp($1); }
+    | NOT Exp {}
+    | Exp AND Exp {}
+    | Exp OR Exp {}
+    | Exp EQUALITYOP Exp {}
+    | Exp RELATIONALOP Exp {}
+    | LPAREN Type RPAREN Exp {}
     ;
 %%
 
