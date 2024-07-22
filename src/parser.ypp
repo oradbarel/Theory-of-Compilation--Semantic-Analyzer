@@ -68,29 +68,29 @@ Call:
     ;
 
 Type:
-    INT { $$ = new Type($1); }
-    | BYTE { $$ = new Type($1); }
-    | BOOL { $$ = new Type($1); }
+    INT { $$ = new Type(INT); }
+    | BYTE { $$ = new Type(BYTE); }
+    | BOOL { $$ = new Type(BOOLEAN); }
     ;
 
 Exp:
     LPAREN Exp RPAREN {}
-    | Exp PLUS Exp {}
-    | Exp MINUS Exp {}
-    | Exp MULT Exp {}
-    | Exp DIV Exp {}
-    | ID { $$ = new Exp($1, "id"); }
-    | Call {}
-    | NUM { $$ = new Exp($1, "num"); }
-    | NUM B {}
-    | STRING { $$ = new Exp($1); }
-    | TRUE { $$ = new Exp($1); }
-    | FALSE { $$ = new Exp($1); }
-    | NOT Exp {}
-    | Exp AND Exp {}
-    | Exp OR Exp {}
-    | Exp EQUALITYOP Exp {}
-    | Exp RELATIONALOP Exp {}
+    | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp DIV Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | ID { $$ = new Exp(ID); }
+    | Call { }
+    | NUM { $$ = new Exp(NUM); }
+    | NUM B { $$ = new Exp(BYTE); }
+    | STRING { $$ = new Exp(STRING); }
+    | TRUE { $$ = new Exp(BOOLEAN); }
+    | FALSE { $$ = new Exp(BOOLEAN); }
+    | NOT Exp { $$ = new Exp(dynamic_cast<Exp*>($2), $1); }
+    | Exp AND Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp OR Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp EQUALITYOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
+    | Exp RELATIONALOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
     | LPAREN Type RPAREN Exp {}
     ;
 %%

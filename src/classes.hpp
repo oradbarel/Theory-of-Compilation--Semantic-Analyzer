@@ -3,82 +3,121 @@
 
 #include "hw3_output.hpp"
 
-/**
- * Base class for each nonterminal.
- * This will redfine the `YYSTYPE`.
- */
-class Node
+namespace classes
 {
-protected:
-    std::string value;
+    typedef enum
+    {
+        NONE = -1,
+        ID,
+        INT,
+        BYTE,
+        STRING,
+        BOOLEAN
+    } ExpType;
 
-public:
-    // Node() : value("") {};
-    Node(const std::string &value) : value(value) {}
-    Node(const Node* other) : value(other->value) {}
-    virtual ~Node() = default;
-};
+    typedef enum
+    {
+        NONE = -1,
+        LOGIC,
+        RELOP,
+        ARITHMETIC,
+    } OperatorType;
 
-class Program : public Node
-{
-private:
-    /* data */
-public:
-    Program(/* args */) = default;
-    ~Program() = default;
-};
+    /**
+     * Base class for each nonterminal.
+     * This will redfine the `YYSTYPE`.
+     */
+    class Node
+    {
+    private:
+        std::string value;
 
-class Statements : public Node
-{
-private:
-    /* data */
-public:
-    Statements(/* args */) = default;
-    ~Statements() = default;
-};
+    public:
+        Node() : value("") {};
+        Node(const std::string &value) : value(value) {}
+        Node(const Node *other) : value(other->value) {}
+        virtual ~Node() = default;
+    };
 
-class Statement : public Node
-{
-private:
-    /* data */
-public:
-    Statement(/* args */) = default;
-    ~Statement() = default;
-};
+    class Program : public Node
+    {
+    private:
+        /* data */
+    public:
+        Program(/* args */) = default;
+        ~Program() = default;
+    };
 
-class Call : public Node
-{
-private:
-    /* data */
-public:
-    Call(/* args */) = default;
-    ~Call() = default;
-};
+    class Statements : public Node
+    {
+    private:
+        /* data */
+    public:
+        Statements(/* args */) = default;
+        ~Statements() = default;
+    };
 
-class Type : public Node
-{
-public:
-    Type(const Node* type) : Node(type) {}
-    ~Type() = default;
-};
+    class Statement : public Node
+    {
+    private:
+        /* data */
+    public:
+        Statement(/* args */) = default;
+        ~Statement() = default;
+    };
 
-class Exp : public Node
-{
-protected:
-    std::string type;
-public:
-    //Exp(const Node* exp) {}
-    ~Exp() = default;
-};
+    class Call : public Node
+    {
+    private:
+        /* data */
+    public:
+        Call(/* args */) = default;
+        ~Call() = default;
+    };
 
+    class Type : public Node
+    {
+    private:
+        ExpType expType;
+
+    public:
+        Type(ExpType expType) : expType(expType) {}
+        ~Type() = default;
+    };
+
+    class Exp : public Node
+    {
+    private:
+        ExpType expType;
+
+    public:
+        Exp(ExpType expType) : expType(expType) {}
+        Exp(const Exp *operand, const Node *operatorNode);
+        Exp(const Exp *operand1, const Exp *operand2, const Node *operatorNode);
+        virtual ~Exp() = default;
+    };
+}
+
+/*
 class BoolExp : public Exp
 {
 private:
-    bool bool_value;
+    bool boolValue;
 public:
-    //BoolExp(const Node* BoolExp) : Node(BoolExp) {}
+    //BoolExp(const BoolExp* boolExp) : Node(BoolExp) {}
     ~BoolExp() = default;
 };
+
+class NumExp : public Exp
+{
+private:
+    int numValue;
+    std::string type;
+public:
+    //NumExp(const NumExp* numExp) {}
+    ~NumExp() = default;
+};
+*/
 
 /*
 class NumType
