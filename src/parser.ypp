@@ -75,7 +75,7 @@ Type:
     ;
 
 Exp:
-    LPAREN Exp RPAREN { $$ = new Exp(dynamic_cast<Exp*>($1))}
+    LPAREN Exp RPAREN { $$ = new Exp(dynamic_cast<Exp*>($2))}
     | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
     | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
     | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
