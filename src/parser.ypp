@@ -1,6 +1,6 @@
 %{
     #include <iostream>
-    #include "output.hpp"
+    #include "hw3_output.hpp"
     #include "classes.hpp"
 
     extern int yylex();
