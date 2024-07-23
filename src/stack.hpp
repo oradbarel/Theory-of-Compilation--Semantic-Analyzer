@@ -1,0 +1,43 @@
+#ifndef _stack_
+#define _stack_
+
+#include "hw3_output.hpp"
+#include <stack>
+#include <iostream>
+
+using namespace std;
+
+class basic_entry
+{
+    public:
+        std::string name;
+        std::string type; // maybe change to enum? maybe need different entries for functions
+        int offset;
+
+        basic_entry(std::string name, std::string type, int offset);
+        void print_entry();
+};
+
+class symbol_table
+{
+    public:
+    std::vector<basic_entry> entries_vector;
+
+    void add_entry(std::string name, std::string type, int offset);
+    bool is_entry_in_table(string name);
+    string find_type(string name);
+    void print_all_entries();
+};
+
+class tabels_stack
+{
+    public:
+    stack<symbol_table> scopes_stack;
+
+    tabels_stack();
+    void add_new_table();
+    void remove_last_table();
+};
+
+
+#endif // _stack_
