@@ -10,9 +10,9 @@ using namespace std;
 
 basic_entry::basic_entry(std::string name, std::string type, int offset)
 {
-    name = name; 
-    type = type;
-    offset = offset;
+    this->name = name; 
+    this->type = type;
+    this->offset = offset;
 }
 
 void basic_entry::print_entry()
@@ -46,7 +46,7 @@ string symbol_table::find_type(string name)
         if (entry->name == name)
             return entry->type;
     }
-    return("error: entry does not exist");
+    return("error: " + name + " is not in the table");
 }   
 
 void symbol_table::print_all_entries()
@@ -89,9 +89,11 @@ void tabels_stack::remove_last_table()
 }
 
 
+
 int main()
 {
-    basic_entry my_entry("x", "int", 1);
-    my_entry.print_entry();
+    tabels_stack my_stack;
+    my_stack.remove_last_table();
+    my_stack.remove_last_table();
     return(1);
 }
