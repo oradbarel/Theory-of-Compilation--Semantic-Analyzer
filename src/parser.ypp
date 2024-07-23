@@ -1,6 +1,7 @@
 %{
     #include <iostream>
     #include "output.hpp"
+    #include "classes.hpp"
 
     extern int yylex();
     extern int yylineno;
@@ -41,30 +42,30 @@
 
 %%
 Program:
-    Statements { printProductionRule(1); }
+    Statements {}
     ;
 
 Statements:
-    Statement { printProductionRule(2); }
-    | Statements Statement { printProductionRule(3); }
+    Statement {}
+    | Statements Statement {}
     ;
 
 Statement:
-    LBRACE Statements RBRACE { printProductionRule(4); }
-    | Type ID SC { printProductionRule(5); }
-    | Type ID ASSIGN Exp SC { printProductionRule(6); }
-    | ID ASSIGN Exp SC { printProductionRule(7); }
-    | Call SC { printProductionRule(8); }
-    | RETURN SC { printProductionRule(9); }
-    | IF LPAREN Exp RPAREN Statement { printProductionRule(10); }
-    | IF LPAREN Exp RPAREN Statement ELSE Statement { printProductionRule(11); }
-    | WHILE LPAREN Exp RPAREN Statement { printProductionRule(12); }
-    | BREAK SC { printProductionRule(13); }
-    | CONTINUE SC { printProductionRule(14); }
+    LBRACE Statements RBRACE {}
+    | Type ID SC {}
+    | Type ID ASSIGN Exp SC {}
+    | ID ASSIGN Exp SC {}
+    | Call SC {}
+    | RETURN SC {}
+    | IF LPAREN Exp RPAREN Statement {}
+    | IF LPAREN Exp RPAREN Statement ELSE Statement {}
+    | WHILE LPAREN Exp RPAREN Statement {}
+    | BREAK SC {}
+    | CONTINUE SC {}
     ;
 
 Call:
-    ID LPAREN Exp RPAREN { printProductionRule(15); }
+    ID LPAREN Exp RPAREN { $$ = new Call($1, $3); }
     ;
 
 Type:
@@ -74,24 +75,24 @@ Type:
     ;
 
 Exp:
-    LPAREN Exp RPAREN {}
-    | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp DIV Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | ID { $$ = new Exp(ID); }
-    | Call { }
-    | NUM { $$ = new Exp(NUM); }
-    | NUM B { $$ = new Exp(BYTE); }
+    LPAREN Exp RPAREN { $$ = new Exp(dynamic_cast<Exp*>($1))}
+    | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
+    | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
+    | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
+    | Exp DIV Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
+    | ID { $$ = new Exp($1)}
+    | Call { $$ = new Exp(dynamic_cast<Call*>($1)) }
+    | NUM { $$ = new Exp(INT); }
+    | NUM B { $$ = new Exp(BYTE, $1); }
     | STRING { $$ = new Exp(STRING); }
     | TRUE { $$ = new Exp(BOOLEAN); }
     | FALSE { $$ = new Exp(BOOLEAN); }
-    | NOT Exp { $$ = new Exp(dynamic_cast<Exp*>($2), $1); }
-    | Exp AND Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp OR Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp EQUALITYOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | Exp RELATIONALOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), $2); }
-    | LPAREN Type RPAREN Exp {}
+    | NOT Exp { $$ = new Exp(dynamic_cast<Exp*>($2), LOGIC); }
+    | Exp AND Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), LOGIC); }
+    | Exp OR Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), LOGIC); }
+    | Exp EQUALITYOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), RELOP); }
+    | Exp RELATIONALOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), RELOP); }
+    | LPAREN Type RPAREN Exp { $$ = new Exp(dynamic_cast<Exp*>($4), dynamic_cast<Type*>($2)); }
     ;
 %%
 

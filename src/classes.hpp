@@ -3,16 +3,17 @@
 
 #include "hw3_output.hpp"
 
+unsigned int const MAX_BYTE = 255;
 namespace classes
 {
     typedef enum
     {
         NONE = -1,
-        ID,
         INT,
         BYTE,
         STRING,
-        BOOLEAN
+        BOOLEAN,
+        VOID
     } ExpType;
 
     typedef enum
@@ -33,16 +34,15 @@ namespace classes
         std::string value;
 
     public:
-        Node() : value("") {};
-        Node(const std::string &value) : value(value) {}
-        Node(const Node *other) : value(other->value) {}
+        Node();
+        Node(const Node *other);
         virtual ~Node() = default;
+        std::string getValue() const;
+        // OperatorType operatorType() const;
     };
 
     class Program : public Node
     {
-    private:
-        /* data */
     public:
         Program(/* args */) = default;
         ~Program() = default;
@@ -50,8 +50,6 @@ namespace classes
 
     class Statements : public Node
     {
-    private:
-        /* data */
     public:
         Statements(/* args */) = default;
         ~Statements() = default;
@@ -59,8 +57,6 @@ namespace classes
 
     class Statement : public Node
     {
-    private:
-        /* data */
     public:
         Statement(/* args */) = default;
         ~Statement() = default;
@@ -68,33 +64,46 @@ namespace classes
 
     class Call : public Node
     {
-    private:
-        /* data */
     public:
-        Call(/* args */) = default;
+        // Data:
+        ExpType retType;
+        // Methods:
+        
+        //Call(/* args */) = default;
         ~Call() = default;
     };
 
     class Type : public Node
     {
-    private:
-        ExpType expType;
-
     public:
-        Type(ExpType expType) : expType(expType) {}
+        // Data:
+        ExpType type;
+
+        // Methods:
+        Type(ExpType type);
         ~Type() = default;
+        ExpType getType() const;
+        bool Type::isNum() const;
     };
 
     class Exp : public Node
     {
-    private:
-        ExpType expType;
 
     public:
-        Exp(ExpType expType) : expType(expType) {}
-        Exp(const Exp *operand, const Node *operatorNode);
-        Exp(const Exp *operand1, const Exp *operand2, const Node *operatorNode);
+        // Data:
+        ExpType expType;
+
+        // Methods:
+        Exp(const Exp *other);
+        Exp(const Node *id);
+        Exp(const Call *call);
+        Exp(ExpType expType);
+        Exp(ExpType expType, const Node *node);
+        Exp(const Exp *operand, OperatorType operatorType);
+        Exp(const Exp *operand1, const Exp *operand2, OperatorType operatorType);
+        Exp(const Exp *operand, const Type *type);
         virtual ~Exp() = default;
+        bool isNumExp() const;
     };
 }
 
