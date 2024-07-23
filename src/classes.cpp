@@ -127,11 +127,9 @@ Exp::Exp(const Exp *operand1, const Exp *operand2, OperatorType operatorType)
                 {
                     this->expType = BYTE;
                 }
-                this->expType = BOOLEAN;
                 return;
             }
             break;
-
         default:
             break;
         }
