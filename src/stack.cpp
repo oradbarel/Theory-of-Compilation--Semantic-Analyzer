@@ -90,10 +90,10 @@ void tabels_stack::remove_last_table()
 
 
 
-int main()
-{
-    tabels_stack my_stack;
-    my_stack.remove_last_table();
-    my_stack.remove_last_table();
-    return(1);
-}
+// int main()
+// {
+//     tabels_stack my_stack;
+//     my_stack.remove_last_table();
+//     my_stack.remove_last_table();
+//     return(1);
+// }
