@@ -7,6 +7,11 @@ using namespace classes;
 
 Node::Node() : value("") {};
 
+Node::Node(std::string text)
+{
+    this->value = text;
+}
+
 Node::Node(const Node *other)
 {
     if(other)
@@ -34,7 +39,7 @@ ExpType Type::getType() const
 
 bool Type::isNum() const
 {
-    return this->type == INT || this->type == BYTE;
+    return this->type == ExpType::INT || this->type == ExpType::BYTE;
 }
 
 // -----
@@ -72,7 +77,7 @@ Exp::Exp(ExpType expType) : expType(expType) {}
 
 Exp::Exp(ExpType expType, const Node *node)
 {
-    if (expType == BYTE && node && stoi(node->getValue()) < MAX_BYTE)
+    if (expType == ExpType::BYTE && node && stoi(node->getValue()) < MAX_BYTE)
     {
         this->expType = expType;
     }
@@ -84,9 +89,9 @@ Exp::Exp(ExpType expType, const Node *node)
 
 Exp::Exp(const Exp *operand, OperatorType operatorType)
 {
-    if (operand && operand->expType == BOOLEAN && operatorType == LOGIC)
+    if (operand && operand->expType == ExpType::BOOLEAN && operatorType == OperatorType::LOGIC)
     {
-        this->expType = BOOLEAN;
+        this->expType = ExpType::BOOLEAN;
     }
     else
     {
@@ -100,32 +105,32 @@ Exp::Exp(const Exp *operand1, const Exp *operand2, OperatorType operatorType)
     {
         switch (operatorType)
         {
-        case LOGIC:
-            if (operand1->expType == operand2->expType == BOOLEAN)
+        case OperatorType::LOGIC:
+            if (operand1->expType == ExpType::BOOLEAN && operand2->expType == ExpType::BOOLEAN)
             {
-                this->expType = BOOLEAN;
+                this->expType = ExpType::BOOLEAN;
                 return;
             }
             break;
 
-        case RELOP:
+        case OperatorType::RELOP:
             if (operand1->isNumExp() && operand2->isNumExp())
             {
-                this->expType = BOOLEAN;
+                this->expType = ExpType::BOOLEAN;
                 return;
             }
             break;
 
-        case ARITHMETIC:
+        case OperatorType::ARITHMETIC:
             if (operand1->isNumExp() && operand2->isNumExp())
             {
-                if (operand1->expType == INT || operand2->expType == INT)
+                if (operand1->expType == ExpType::INT || operand2->expType == ExpType::INT)
                 {
-                    this->expType = INT;
+                    this->expType = ExpType::INT;
                 }
                 else
                 {
-                    this->expType = BYTE;
+                    this->expType = ExpType::BYTE;
                 }
                 return;
             }
@@ -151,7 +156,7 @@ Exp::Exp(const Exp *operand, const Type *type)
 
 bool Exp::isNumExp() const
 {
-    return this->expType == INT || this->expType == BYTE;
+    return this->expType == ExpType::INT || this->expType == ExpType::BYTE;
 }
 
 // -----

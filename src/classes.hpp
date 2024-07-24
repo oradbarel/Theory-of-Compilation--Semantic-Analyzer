@@ -6,23 +6,23 @@
 unsigned int const MAX_BYTE = 255;
 namespace classes
 {
-    typedef enum
+    enum class ExpType
     {
-        NONE = -1,
+        // NONE = -1,
         INT,
         BYTE,
         STRING,
         BOOLEAN,
         VOID
-    } ExpType;
+    };
 
-    typedef enum
+    enum class OperatorType
     {
-        NONE = -1,
+        // NONE = -1,
         LOGIC,
         RELOP,
         ARITHMETIC,
-    } OperatorType;
+    };
 
     /**
      * Base class for each nonterminal.
@@ -35,6 +35,7 @@ namespace classes
 
     public:
         Node();
+        Node(std::string text);
         Node(const Node *other);
         virtual ~Node() = default;
         std::string getValue() const;
@@ -83,7 +84,7 @@ namespace classes
         Type(ExpType type);
         ~Type() = default;
         ExpType getType() const;
-        bool Type::isNum() const;
+        bool isNum() const;
     };
 
     class Exp : public Node
@@ -177,6 +178,6 @@ union YYSTYPE
 };
 */
 
-#define YYSTYPE Node
+#define YYSTYPE classes::Node
 
 #endif // _236360_3_CLASSES_
