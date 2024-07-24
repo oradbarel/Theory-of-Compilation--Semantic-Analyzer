@@ -7,10 +7,7 @@ using namespace classes;
 
 Node::Node() : value("") {};
 
-Node::Node(std::string text)
-{
-    this->value = text;
-}
+Node::Node(const std::string & text) : value(text) {}
 
 Node::Node(const Node *other)
 {
