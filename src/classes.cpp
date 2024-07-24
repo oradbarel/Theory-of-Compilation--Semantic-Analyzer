@@ -84,7 +84,7 @@ Exp::Exp(ExpType expType, const Node *node)
 
 Exp::Exp(const Exp *operand, OperatorType operatorType)
 {
-    if (operand && operand->expType == operatorType == BOOLEAN)
+    if (operand && operand->expType == BOOLEAN && operatorType == LOGIC)
     {
         this->expType = BOOLEAN;
     }
@@ -127,11 +127,9 @@ Exp::Exp(const Exp *operand1, const Exp *operand2, OperatorType operatorType)
                 {
                     this->expType = BYTE;
                 }
-                this->expType = BOOLEAN;
                 return;
             }
             break;
-
         default:
             break;
         }
