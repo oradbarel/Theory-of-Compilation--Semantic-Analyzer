@@ -1,8 +1,9 @@
 %{
+    #include "classes.hpp"
     #include "hw3_output.hpp"
     #include "parser.tab.hpp"
-
     using namespace output;
+    using namespace classes;
 %}
 
 %option yylineno
@@ -25,7 +26,7 @@ else     yylval=new Node(yytext); return ELSE;
 while     yylval=new Node(yytext); return WHILE;
 break     yylval=new Node(yytext); return BREAK;
 continue     yylval=new Node(yytext); return CONTINUE;
-; return     yylval=new Node(yytext); SC;
+;     yylval=new Node(yytext); return SC;
 \(     yylval=new Node(yytext); return LPAREN;
 \)     yylval=new Node(yytext); return RPAREN;
 \{     yylval=new Node(yytext); return LBRACE;
