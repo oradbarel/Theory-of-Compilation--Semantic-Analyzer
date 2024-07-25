@@ -6,8 +6,9 @@
 #include "classes.hpp"
 
 using namespace std;
+using namespace classes;
 
-// --------- nethods for entry ---------
+// --------- Methods for entry ---------
 
 basic_entry::basic_entry(std::string name, std::string type, int offset)
 {

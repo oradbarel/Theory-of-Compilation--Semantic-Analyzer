@@ -2,13 +2,18 @@
 #define _236360_3_CLASSES_
 
 #include "hw3_output.hpp"
+#include <set>
+#include <map>
 
-unsigned int const MAX_BYTE = 255;
+extern int yylineno;
+
 namespace classes
 {
+    // ----- Enums:
+
     enum class ExpType
     {
-        // NONE = -1,
+        NONE = -1,
         INT,
         BYTE,
         STRING,
@@ -16,15 +21,40 @@ namespace classes
         VOID
     };
 
-    std::string expTypeToString(ExpType type);
-
     enum class OperatorType
     {
-        // NONE = -1,
+        NONE = -1,
         LOGIC,
         RELOP,
         ARITHMETIC,
     };
+
+    // -----
+    // ----- Constants:
+
+    const unsigned int MAX_BYTE = 255;
+
+    typedef struct
+    {
+        std::string funcName;
+        std::set<ExpType> argTypes;
+        ExpType retType;
+    } Func;
+
+    const std::map<std::string, Func> FUNCTIONS = {
+        {"print", {"print", {ExpType::STRING}, ExpType::VOID}},
+        {"printi", {"printi", {ExpType::INT, ExpType::BYTE}, ExpType::VOID}},
+        {"reai", {"readi", {ExpType::INT, ExpType::BYTE}, ExpType::INT}}};
+
+    // -----
+
+    // ----- Helper Functions:
+    // -----
+
+    std::string expTypeToString(ExpType type);
+    ExpType stringToExpType(const string& type);
+
+    // ----- Classes:
 
     /**
      * Base class for each nonterminal.
@@ -37,7 +67,7 @@ namespace classes
 
     public:
         Node();
-        Node(const std::string & text);
+        Node(const std::string &text);
         Node(const Node *other);
         virtual ~Node() = default;
         std::string getValue() const;
@@ -70,22 +100,21 @@ namespace classes
 
     class Call : public Node
     {
+    private:
+        //static Func getFuncByName(const std::string &name);
+
     public:
-        // Data:
         ExpType retType;
-        // Methods:
-        
-        //Call(/* args */) = default;
+
+        Call(const Node *func, const Exp *arg);
         ~Call() = default;
     };
 
     class Type : public Node
     {
     public:
-        // Data:
         ExpType type;
 
-        // Methods:
         Type(ExpType type);
         ~Type() = default;
         ExpType getType() const;
@@ -96,10 +125,8 @@ namespace classes
     {
 
     public:
-        // Data:
         ExpType expType;
 
-        // Methods:
         Exp(const Exp *other);
         Exp(const Node *id);
         Exp(const Call *call);
@@ -111,6 +138,8 @@ namespace classes
         virtual ~Exp() = default;
         bool isNumExp() const;
     };
+
+    // -----
 }
 
 /*

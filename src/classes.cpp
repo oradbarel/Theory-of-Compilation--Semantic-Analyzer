@@ -1,12 +1,18 @@
+// #define NDEBUG
+#include <cassert>
 #include "classes.hpp"
 #include "stack.hpp"
 #include "parser.ypp"
 
 using namespace std;
+using namespace output;
 using namespace classes;
 
-// ----- enums
-std::string expTypeToString(ExpType type)
+// ----- Helper Functions:
+
+#define ASSERT_UNEXPECTED_ERROR assert("Unexpected error with args")
+
+string classes::expTypeToString(ExpType type)
 {
     switch (type)
     {
@@ -17,19 +23,40 @@ std::string expTypeToString(ExpType type)
     case ExpType::BOOLEAN:
         return "BOOL";
     default:
-        exit(0);
+        ASSERT_UNEXPECTED_ERROR;
+        return "";
     }
 }
 
+ExpType classes::stringToExpType(const string& type)
+{
+    if (type == "INT") {
+        return ExpType::INT;
+    }
+    else if (type == "BYTE")
+    {
+        return ExpType::BYTE;
+    }
+    else if (type == "BOOL") {
+        return ExpType::BOOLEAN;
+    }
+    else 
+    {
+        ASSERT_UNEXPECTED_ERROR;
+        return ExpType::NONE;
+    }
+}
+
+// -----
 // ----- Class Node:
 
 Node::Node() : value("") {};
 
-Node::Node(const std::string & text) : value(text) {}
+Node::Node(const std::string &text) : value(text) {}
 
 Node::Node(const Node *other)
 {
-    if(other)
+    if (other)
     {
         this->value = other->value;
     }
@@ -40,8 +67,27 @@ std::string Node::getValue() const
     return this->value;
 }
 
-void Node::setValue(std::string val) {value = val;}
+// -----
 
+// ----- Class Call:
+
+Call::Call(const Node *func, const Exp *arg)
+{
+    auto funcIter = FUNCTIONS.find(func->getValue());
+    if (funcIter == FUNCTIONS.end())
+    {
+        errorUndefFunc(yylineno, func->getValue());
+        exit(0);
+    }
+    else if (funcIter->second.argTypes.find(arg->expType) == funcIter->second.argTypes.end())
+    {
+        string type = expTypeToString(*funcIter->second.argTypes.begin());
+        errorPrototypeMismatch(yylineno, funcIter->first, type);
+        exit(0);
+    }
+    this->retType = funcIter->second.retType;
+    // TODO: Maybe more code regarding the new scope...
+}
 
 // ----- Class Type:
 
@@ -63,110 +109,131 @@ bool Type::isNum() const
 
 Exp::Exp(const Exp *other)
 {
-    if (other)
+    if (!other)
     {
-        this->expType = other->expType;
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    this->expType = other->expType;
 }
 
-Exp::Exp(const Node* id)
+Exp::Exp(const Node *id)
 {
-    if(id)
+    if (!id)
     {
-        string varName = id->getValue();
-        /*
-        TODO: Find id by varName and if exists get its type and save in this->expType 
-        If does not exist, handle error
-        */
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    string varName = id->getValue();
+    if (!tabels_stack::GetInstance()->is_var_in_stack(varName))
+    {
+        errorUndef(yylineno, varName);
+    }
+    this->expType = stringToExpType(tabels_stack::GetInstance()->get_var_type(varName));
 }
-Exp::Exp(const Call* call)
+Exp::Exp(const Call *call)
 {
-    if (call)
+    if (!call)
     {
-        this->expType = call->retType;
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    this->expType = call->retType;
 }
 
 Exp::Exp(ExpType expType) : expType(expType) {}
 
 Exp::Exp(ExpType expType, const Node *node)
 {
-    if (expType == ExpType::BYTE && node && stoi(node->getValue()) < MAX_BYTE)
+    if (!node || expType != ExpType::BYTE)
     {
-        this->expType = expType;
+        ASSERT_UNEXPECTED_ERROR;
     }
-    else
+    if (stoi(node->getValue()) > MAX_BYTE)
     {
-        /* TODO: Handle Error*/
+        errorByteTooLarge(yylineno, node->getValue());
+        exit(0);
     }
+    this->expType = expType;
 }
 
 Exp::Exp(const Exp *operand, OperatorType operatorType)
 {
-    if (operand && operand->expType == ExpType::BOOLEAN && operatorType == OperatorType::LOGIC)
+    if (!operand || operatorType != OperatorType::LOGIC)
     {
-        this->expType = ExpType::BOOLEAN;
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
-    else
+    if (operand->expType == ExpType::BOOLEAN)
     {
-        /* TODO: Handle Error*/
+        errorMismatch(yylineno); // TODO: check in piazza what to print...
+        exit(0);
     }
+    this->expType = ExpType::BOOLEAN;
 }
 
 Exp::Exp(const Exp *operand1, const Exp *operand2, OperatorType operatorType)
 {
-    if (operand1 && operand2)
+    if (!operand1 || !operand2)
     {
-        switch (operatorType)
-        {
-        case OperatorType::LOGIC:
-            if (operand1->expType == ExpType::BOOLEAN && operand2->expType == ExpType::BOOLEAN)
-            {
-                this->expType = ExpType::BOOLEAN;
-                return;
-            }
-            break;
-
-        case OperatorType::RELOP:
-            if (operand1->isNumExp() && operand2->isNumExp())
-            {
-                this->expType = ExpType::BOOLEAN;
-                return;
-            }
-            break;
-
-        case OperatorType::ARITHMETIC:
-            if (operand1->isNumExp() && operand2->isNumExp())
-            {
-                if (operand1->expType == ExpType::INT || operand2->expType == ExpType::INT)
-                {
-                    this->expType = ExpType::INT;
-                }
-                else
-                {
-                    this->expType = ExpType::BYTE;
-                }
-                return;
-            }
-            break;
-        default:
-            break;
-        }
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
-    /* TODO: Handle Error*/
+    switch (operatorType)
+    {
+    case OperatorType::LOGIC:
+        if (operand1->expType == ExpType::BOOLEAN && operand2->expType == ExpType::BOOLEAN)
+        {
+            this->expType = ExpType::BOOLEAN;
+            return;
+        }
+        break;
+
+    case OperatorType::RELOP:
+        if (operand1->isNumExp() && operand2->isNumExp())
+        {
+            this->expType = ExpType::BOOLEAN;
+            return;
+        }
+        break;
+
+    case OperatorType::ARITHMETIC:
+        if (operand1->isNumExp() && operand2->isNumExp())
+        {
+            if (operand1->expType == ExpType::INT || operand2->expType == ExpType::INT)
+            {
+                this->expType = ExpType::INT;
+            }
+            else
+            {
+                this->expType = ExpType::BYTE;
+            }
+            return;
+        }
+        break;
+
+    default:
+        ASSERT_UNEXPECTED_ERROR;
+        return;
+        break;
+    }
+    errorMismatch(yylineno); // TODO: check in piazza what to print...
+    exit(0);
 }
 
 Exp::Exp(const Exp *operand, const Type *type)
 {
-    if (operand && operand->isNumExp() && type && type->isNum())
+    if (!operand || !type)
     {
-        this->expType = type->getType();
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
-    else
+    if (!operand->isNumExp() && !type->isNum())
     {
-        /* TODO: Handle Error*/
+        errorMismatch(yylineno); // TODO: check in piazza what to print...
+        exit(0);
     }
+    this->expType = type->getType();
 }
 
 bool Exp::isNumExp() const
@@ -174,19 +241,15 @@ bool Exp::isNumExp() const
     return this->expType == ExpType::INT || this->expType == ExpType::BYTE;
 }
 
-
-
 // ----- Class Statement:
-Statement::Statement(const Type* type, const Node* id)
+Statement::Statement(const Type *type, const Node *id)
 {
-    if (type && id)
+    if (!type || !id)
     {
-        this->type = type->getType();
-        this->setValue(id->getValue());
-        tabels_stack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
-    else
-    {
-        //handle error
-    }
+    this->type = type->getType();
+    this->setValue(id->getValue());
+    tabels_stack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
 }
