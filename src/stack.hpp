@@ -4,6 +4,7 @@
 #include "hw3_output.hpp"
 #include <stack>
 #include <iostream>
+#include "classes.hpp"
 
 using namespace std;
 
@@ -42,6 +43,8 @@ class tabels_stack
     void remove_last_table();
     void add_var(std::string name, std::string type);
     bool is_var_in_stack(string name);
+    string get_var_type(string name);
+    void assign(const Node* id, const Exp* exp);
 };
 
 

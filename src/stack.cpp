@@ -2,6 +2,8 @@
 #include <stack>
 #include <iostream>
 #include "stack.hpp"
+#include "parser.ypp"
+
 
 using namespace std;
 
@@ -45,7 +47,6 @@ string symbol_table::find_type(string name)
         if (entry->name == name)
             return entry->type;
     }
-    return("error: " + name + " is not in the table");
 }   
 
 void symbol_table::print_all_entries()
@@ -90,22 +91,8 @@ void tabels_stack::remove_last_table()
     offsets_stack.pop();  
 }
 
-void tabels_stack::add_var(std::string name, std::string type)
-{
-    // update offset stack:
-    int curr_offset = this->offsets_stack.top();
-    curr_offset++;
-    this->offsets_stack.pop();
-    this->offsets_stack.push(curr_offset);
-
-    //update scopes_stack:
-    symbol_table curr_scope = this->scopes_stack.top();
-    curr_scope.add_entry(name, type, curr_offset);
-}
-
 bool tabels_stack::is_var_in_stack(string name)
 {
-    bool found_var = false;
     std::stack<symbol_table> copiedStack(this->scopes_stack);
     while (!copiedStack.empty()) 
     {
@@ -119,7 +106,51 @@ bool tabels_stack::is_var_in_stack(string name)
     return false;
 }
 
+string tabels_stack::get_var_type(string name)
+{
+    std::stack<symbol_table> copiedStack(this->scopes_stack);
+    while (!copiedStack.empty()) 
+    {
+        symbol_table curr_table = copiedStack.top();
+        if (curr_table.is_entry_in_table(name))
+        {
+            return curr_table.find_type(name);
+        }
+        copiedStack.pop();
+    }
+}
 
+void tabels_stack::add_var(std::string name, std::string type)
+{
+    bool var_exist = this->is_var_in_stack(name);
+    if (var_exist)
+    {
+        output::errorDef(yylineno, name);
+        exit(0);
+    }
+
+    // update offset stack:
+    int curr_offset = this->offsets_stack.top();
+    curr_offset++;
+    this->offsets_stack.pop();
+    this->offsets_stack.push(curr_offset);
+
+    //update scopes_stack:
+    symbol_table curr_scope = this->scopes_stack.top();
+    curr_scope.add_entry(name, type, curr_offset);
+}
+
+void tabels_stack::assign(const Node* id, const Exp* exp)
+{
+    // check matching types
+    std::string id_name = id->getValue();
+    if(is_var_in_stack(id_name))
+    {
+        string id_type = this->get_var_type(id_name);
+        string exp_type = expTypeToString(exp.expType);
+
+    }
+}
 
 
 tabels_stack* tabels_stack::singleton_= nullptr;

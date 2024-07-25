@@ -1,5 +1,6 @@
 #include "classes.hpp"
 #include "stack.hpp"
+#include "parser.ypp"
 
 using namespace std;
 using namespace classes;
