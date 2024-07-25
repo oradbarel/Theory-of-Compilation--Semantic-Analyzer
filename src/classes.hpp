@@ -83,6 +83,8 @@ namespace classes
         ~Program() = default;
     };
 
+    class Exp;
+
     class Statements : public Node
     {
     public:
@@ -99,8 +101,7 @@ namespace classes
         Statement(const Type* type, const Node* id);
         ~Statement() = default;
     };
-
-    class Exp;
+    
     class Call : public Node
     {
     private:
