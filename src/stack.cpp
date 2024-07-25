@@ -3,7 +3,7 @@
 #include <iostream>
 #include "stack.hpp"
 #include "parser.ypp"
-
+#include "classes.hpp"
 
 using namespace std;
 
@@ -148,7 +148,16 @@ void tabels_stack::assign(const Node* id, const Exp* exp)
     {
         string id_type = this->get_var_type(id_name);
         string exp_type = expTypeToString(exp.expType);
-
+        if(id_type != exp_type)
+        {
+            output::errorMismatch(yylineno);
+            exit(0);
+        }
+    }
+    else
+    {
+        output::errorUndef(yylineno, id_name);
+        exit(0);
     }
 }
 

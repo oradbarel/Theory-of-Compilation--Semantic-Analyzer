@@ -55,8 +55,8 @@ Statements:
 Statement:
     LBRACE Statements RBRACE {}
     | Type ID SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
-    | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
-    | ID ASSIGN Exp SC {(tabels_stack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
+    | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2); tabels_stack::GetInstance()->assign($2, dynamic_cast<Exp*>($4))}
+    | ID ASSIGN Exp SC {tabels_stack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
     | Call SC {}
     | RETURN SC {}
     | IF LPAREN Exp RPAREN Statement {}
