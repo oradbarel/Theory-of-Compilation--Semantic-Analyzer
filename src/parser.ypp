@@ -61,9 +61,9 @@ Statement:
     | RETURN SC {}
     | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();}
     | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();} ELSE {tabels_stack::GetInstance()->add_new_table();} Statement {tabels_stack::GetInstance()->remove_last_table();}
-    | WHILE {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();}
-    | BREAK SC {}
-    | CONTINUE SC {}
+    | WHILE {tabels_stack::GetInstance()->entered_while()} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->finished_while();}
+    | BREAK SC {tabels_stack::GetInstance()->check_in_while("break");}
+    | CONTINUE SC {tabels_stack::GetInstance()->check_in_while("continue");}
     ;
 
 Call:

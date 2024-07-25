@@ -163,6 +163,35 @@ void tabels_stack::assign(const Node* id, const Exp* exp)
     }
 }
 
+void tabels_stack::entered_while()
+{
+    tabels_stack::GetInstance()->add_new_table();
+    this->in_while = true;
+}
+
+void tabels_stack::finished_while()
+{
+    tabels_stack::GetInstance()->remove_last_table();
+    this->in_while = false;
+}
+
+void tabels_stack::check_in_while(string command)
+{
+    if (!this->in_while)
+    {
+        if(command == "break")
+        {
+            output::errorUnexpectedBreak(yylineno);
+            exit(0);
+        }
+        else
+        {
+            output::errorUnexpectedContinue(yylineno);
+            exit(0);
+        }
+    }
+}
+
 
 tabels_stack* tabels_stack::singleton_= nullptr;
 

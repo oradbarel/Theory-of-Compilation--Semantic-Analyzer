@@ -35,6 +35,7 @@ class tabels_stack
     public:
     stack<symbol_table> scopes_stack;
     stack<int> offsets_stack;
+    bool in_while = false;
 
     static tabels_stack* singleton_;
     static tabels_stack* GetInstance();
@@ -45,6 +46,9 @@ class tabels_stack
     bool is_var_in_stack(string name);
     string get_var_type(string name);
     void assign(const Node* id, const Exp* exp);
+    void entered_while();
+    void finished_while();
+    void check_in_while(string command);
 };
 
 
