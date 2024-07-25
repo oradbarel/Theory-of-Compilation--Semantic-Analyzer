@@ -59,6 +59,7 @@ Statement:
     | ID ASSIGN Exp SC { TablesStack::GetInstance()->assign($1, dynamic_cast<Exp*>($3)); }
     | Call SC {}
     | RETURN SC {}
+    | IF LPAREN Exp RPAREN Statement { dynamic_cast<Exp*>($3).validateIsBoolean() /*TODO: close scope of if and print all its vars. */ }
     | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); }
     | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); } ELSE {TablesStack::GetInstance()->add_new_table(); } Statement { TablesStack::GetInstance()->remove_last_table(); }
     | WHILE { TablesStack::GetInstance()->entered_while(); } LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->finished_while(); }

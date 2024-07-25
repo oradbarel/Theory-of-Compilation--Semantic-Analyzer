@@ -140,6 +140,7 @@ namespace classes
         Exp(const Exp *operand, const Type *type);
         virtual ~Exp() = default;
         bool isNumExp() const;
+        void validateIsBoolean();
     };
 
     // -----

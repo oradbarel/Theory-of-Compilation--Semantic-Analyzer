@@ -270,5 +270,14 @@ namespace classes
         return this->expType == ExpType::INT || this->expType == ExpType::BYTE;
     }
 
+    void Exp::validateIsBoolean()
+    {
+        if (this->expType != ExpType::BOOLEAN)
+        {
+            errorMismatch(yylineno);
+            exit(0);
+        }
+        
+    }
     // -----
 }
