@@ -83,6 +83,8 @@ namespace classes
         ~Program() = default;
     };
 
+    class Exp;
+
     class Statements : public Node
     {
     public:
