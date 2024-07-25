@@ -12,7 +12,7 @@ using namespace classes;
 
 #define ASSERT_UNEXPECTED_ERROR assert("Unexpected error with args")
 
-std::string classes::expTypeToString(ExpType type)
+string classes::expTypeToString(ExpType type)
 {
     switch (type)
     {
@@ -23,7 +23,27 @@ std::string classes::expTypeToString(ExpType type)
     case ExpType::BOOLEAN:
         return "BOOL";
     default:
-        exit(0);
+        ASSERT_UNEXPECTED_ERROR;
+        return "";
+    }
+}
+
+ExpType classes::stringToExpType(const string& type)
+{
+    if (type == "INT") {
+        return ExpType::INT;
+    }
+    else if (type == "BYTE")
+    {
+        return ExpType::BYTE;
+    }
+    else if (type == "BOOL") {
+        return ExpType::BOOLEAN;
+    }
+    else 
+    {
+        ASSERT_UNEXPECTED_ERROR;
+        return ExpType::NONE;
     }
 }
 
@@ -89,29 +109,36 @@ bool Type::isNum() const
 
 Exp::Exp(const Exp *other)
 {
-    if (other)
+    if (!other)
     {
-        this->expType = other->expType;
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    this->expType = other->expType;
 }
 
 Exp::Exp(const Node *id)
 {
-    if (id)
+    if (!id)
     {
-        string varName = id->getValue();
-        /*
-        TODO: Find id by varName and if exists get its type and save in this->expType
-        If does not exist, handle error
-        */
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    string varName = id->getValue();
+    if (!tabels_stack::GetInstance()->is_var_in_stack(varName))
+    {
+        errorUndef(yylineno, varName);
+    }
+    this->expType = stringToExpType(tabels_stack::GetInstance()->get_var_type(varName));
 }
 Exp::Exp(const Call *call)
 {
-    if (call)
+    if (!call)
     {
-        this->expType = call->retType;
+        ASSERT_UNEXPECTED_ERROR;
+        return;
     }
+    this->expType = call->retType;
 }
 
 Exp::Exp(ExpType expType) : expType(expType) {}
@@ -203,7 +230,7 @@ Exp::Exp(const Exp *operand, const Type *type)
     }
     if (!operand->isNumExp() && !type->isNum())
     {
-        errorMismatch(yylineno);  // TODO: check in piazza what to print...
+        errorMismatch(yylineno); // TODO: check in piazza what to print...
         exit(0);
     }
     this->expType = type->getType();
@@ -217,7 +244,7 @@ bool Exp::isNumExp() const
 // ----- Class Statement:
 Statement::Statement(const Type *type, const Node *id)
 {
-    if(!type || !id)
+    if (!type || !id)
     {
         ASSERT_UNEXPECTED_ERROR;
         return;

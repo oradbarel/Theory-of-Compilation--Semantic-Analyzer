@@ -6,8 +6,9 @@
 
 
 using namespace std;
+using namespace classes;
 
-// --------- nethods for entry ---------
+// --------- Methods for entry ---------
 
 basic_entry::basic_entry(std::string name, std::string type, int offset)
 {
@@ -147,7 +148,7 @@ void tabels_stack::assign(const Node* id, const Exp* exp)
     if(is_var_in_stack(id_name))
     {
         string id_type = this->get_var_type(id_name);
-        string exp_type = expTypeToString(exp.expType);
+        string exp_type = expTypeToString(exp->expType);
 
     }
 }

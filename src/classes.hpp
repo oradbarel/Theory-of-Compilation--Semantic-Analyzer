@@ -13,6 +13,7 @@ namespace classes
 
     enum class ExpType
     {
+        NONE = -1,
         INT,
         BYTE,
         STRING,
@@ -22,6 +23,7 @@ namespace classes
 
     enum class OperatorType
     {
+        NONE = -1,
         LOGIC,
         RELOP,
         ARITHMETIC,
@@ -48,8 +50,9 @@ namespace classes
 
     // ----- Helper Functions:
     // -----
-    
+
     std::string expTypeToString(ExpType type);
+    ExpType stringToExpType(const string& type);
 
     // ----- Classes:
 
