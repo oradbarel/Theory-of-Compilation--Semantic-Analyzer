@@ -90,15 +90,17 @@ namespace classes
         ~Statements() = default;
     };
 
+    class Type;
     class Statement : public Node
     {
     public:
         ExpType type;
-
+        Statement(const Exp* exp);
         Statement(const Type* type, const Node* id);
         ~Statement() = default;
     };
 
+    class Exp;
     class Call : public Node
     {
     private:
@@ -143,75 +145,6 @@ namespace classes
     // -----
 }
 
-/*
-class BoolExp : public Exp
-{
-private:
-    bool boolValue;
-public:
-    //BoolExp(const BoolExp* boolExp) : Node(BoolExp) {}
-    ~BoolExp() = default;
-};
-
-class NumExp : public Exp
-{
-private:
-    int numValue;
-    std::string type;
-public:
-    //NumExp(const NumExp* numExp) {}
-    ~NumExp() = default;
-};
-*/
-
-/*
-class NumType
-{
-public:
-    typedef enum
-    {
-        INT,
-        BYTE
-    } type;
-
-private:
-    int val;
-    type numType;
-
-public:
-    NumType(int val, type numType);
-    ~NumType();
-};
-
-class BoolType
-{
-private:
-    bool val;
-
-public:
-    BoolType(bool val);
-    ~BoolType();
-};
-
-class StringType
-{
-private:
-    std::string val;
-
-public:
-    StringType(const std::string &val);
-    ~StringType();
-};
-
-// Semantic value type definition
-
-union YYSTYPE
-{
-    NumType numType;   // Example for integer value
-    BoolType boolType; // Example for string value
-    StringType stringType;
-};
-*/
 
 #define YYSTYPE classes::Node*
 

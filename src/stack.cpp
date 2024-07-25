@@ -1,8 +1,9 @@
 #include <stack>
 #include <iostream>
+#include <algorithm>
 #include "hw3_output.hpp"
 #include "stack.hpp"
-#include "parser.ypp"
+//#include "parser.ypp"
 #include "classes.hpp"
 
 using namespace std;
@@ -53,6 +54,7 @@ string SymbolTable::find_type(const string &name)
         if (entry->name == name)
             return entry->type;
     }
+    throw out_of_range("A variable with such a name does not exist");
 }
 
 void SymbolTable::print_all_entries()
