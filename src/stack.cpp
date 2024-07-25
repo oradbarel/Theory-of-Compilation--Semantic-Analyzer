@@ -68,14 +68,15 @@ tabels_stack::tabels_stack()
     global_tabel.add_entry("printi", output::makeFunctionType("int", "void"), 0);
     global_tabel.add_entry("readi", output::makeFunctionType("int", "int"), 0);
     scopes_stack.push(global_tabel);
-    offsets_stack.push(0); // maybe should be 1?
+    offsets_stack.push(0);
 }
 
 void tabels_stack::add_new_table()
 {
     symbol_table new_table;
     scopes_stack.push(new_table);
-    offsets_stack.push(0);
+    int curr_offset = offsets_stack.top(); 
+    offsets_stack.push(curr_offset);
 } 
 
 void tabels_stack::remove_last_table()

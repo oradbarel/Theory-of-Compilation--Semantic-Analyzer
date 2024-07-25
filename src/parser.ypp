@@ -53,15 +53,15 @@ Statements:
     ;
 
 Statement:
-    LBRACE Statements RBRACE {}
+    LBRACE {tabels_stack::GetInstance()->add_new_table();} Statements RBRACE {tabels_stack::GetInstance()->remove_last_table();}
     | Type ID SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
     | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2); tabels_stack::GetInstance()->assign($2, dynamic_cast<Exp*>($4))}
     | ID ASSIGN Exp SC {tabels_stack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
     | Call SC {}
     | RETURN SC {}
-    | IF LPAREN Exp RPAREN Statement {}
-    | IF LPAREN Exp RPAREN Statement ELSE Statement {}
-    | WHILE LPAREN Exp RPAREN Statement {}
+    | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();}
+    | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();} ELSE {tabels_stack::GetInstance()->add_new_table();} Statement {tabels_stack::GetInstance()->remove_last_table();}
+    | WHILE {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();}
     | BREAK SC {}
     | CONTINUE SC {}
     ;
