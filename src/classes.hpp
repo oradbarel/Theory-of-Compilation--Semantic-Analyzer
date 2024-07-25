@@ -20,6 +20,8 @@ namespace classes
         VOID
     };
 
+    std::string expTypeToString(ExpType type);
+
     enum class OperatorType
     {
         LOGIC,
@@ -80,6 +82,7 @@ namespace classes
         Node(const Node *other);
         virtual ~Node() = default;
         std::string getValue() const;
+        void setValue(std::string val);
         // OperatorType operatorType() const;
     };
 
@@ -100,7 +103,9 @@ namespace classes
     class Statement : public Node
     {
     public:
-        Statement(/* args */) = default;
+        ExpType type;
+
+        Statement(const Type* type, const Node* id);
         ~Statement() = default;
     };
 
@@ -218,6 +223,6 @@ union YYSTYPE
 };
 */
 
-#define YYSTYPE classes::Node
+#define YYSTYPE classes::Node*
 
 #endif // _236360_3_CLASSES_

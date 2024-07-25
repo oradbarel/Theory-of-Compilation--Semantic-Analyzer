@@ -2,6 +2,7 @@
     #include <iostream>
     #include "hw3_output.hpp"
     #include "classes.hpp"
+    #include "stack.hpp"
 
     extern int yylex();
     extern int yylineno;
@@ -53,9 +54,9 @@ Statements:
 
 Statement:
     LBRACE Statements RBRACE {}
-    | Type ID SC {}
-    | Type ID ASSIGN Exp SC {}
-    | ID ASSIGN Exp SC {}
+    | Type ID SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
+    | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
+    | ID ASSIGN Exp SC {(tabels_stack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
     | Call SC {}
     | RETURN SC {}
     | IF LPAREN Exp RPAREN Statement {}

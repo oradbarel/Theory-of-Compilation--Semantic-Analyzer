@@ -4,6 +4,7 @@
 #include "hw3_output.hpp"
 #include <stack>
 #include <iostream>
+#include "classes.hpp"
 
 using namespace std;
 
@@ -33,10 +34,17 @@ class tabels_stack
 {
     public:
     stack<symbol_table> scopes_stack;
+    stack<int> offsets_stack;
 
+    static tabels_stack* singleton_;
+    static tabels_stack* GetInstance();
     tabels_stack();
     void add_new_table();
     void remove_last_table();
+    void add_var(std::string name, std::string type);
+    bool is_var_in_stack(string name);
+    string get_var_type(string name);
+    void assign(const Node* id, const Exp* exp);
 };
 
 

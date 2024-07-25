@@ -2,9 +2,10 @@
 #include <stack>
 #include <iostream>
 #include "stack.hpp"
+#include "parser.ypp"
+
 
 using namespace std;
-
 
 // --------- nethods for entry ---------
 
@@ -46,7 +47,6 @@ string symbol_table::find_type(string name)
         if (entry->name == name)
             return entry->type;
     }
-    return("error: " + name + " is not in the table");
 }   
 
 void symbol_table::print_all_entries()
@@ -67,17 +67,19 @@ tabels_stack::tabels_stack()
     global_tabel.add_entry("printi", output::makeFunctionType("int", "void"), 0);
     global_tabel.add_entry("readi", output::makeFunctionType("int", "int"), 0);
     scopes_stack.push(global_tabel);
+    offsets_stack.push(0); // maybe should be 1?
 }
 
 void tabels_stack::add_new_table()
 {
     symbol_table new_table;
     scopes_stack.push(new_table);
+    offsets_stack.push(0);
 } 
 
 void tabels_stack::remove_last_table()
 {
-    if (scopes_stack.empty())
+    if (scopes_stack.empty() || offsets_stack.empty())
     {
         std::cout << "error: no tabels (scopes) in the stack" << std::endl;
         exit(0);
@@ -85,9 +87,80 @@ void tabels_stack::remove_last_table()
     output::endScope();
     symbol_table current_scope = scopes_stack.top();
     current_scope.print_all_entries();
-    scopes_stack.pop(); //should we first print all the variables in the scope?    
+    scopes_stack.pop();
+    offsets_stack.pop();  
 }
 
+bool tabels_stack::is_var_in_stack(string name)
+{
+    std::stack<symbol_table> copiedStack(this->scopes_stack);
+    while (!copiedStack.empty()) 
+    {
+        symbol_table curr_table = copiedStack.top();
+        if (curr_table.is_entry_in_table(name))
+        {
+            return true;
+        }
+        copiedStack.pop();
+    }
+    return false;
+}
+
+string tabels_stack::get_var_type(string name)
+{
+    std::stack<symbol_table> copiedStack(this->scopes_stack);
+    while (!copiedStack.empty()) 
+    {
+        symbol_table curr_table = copiedStack.top();
+        if (curr_table.is_entry_in_table(name))
+        {
+            return curr_table.find_type(name);
+        }
+        copiedStack.pop();
+    }
+}
+
+void tabels_stack::add_var(std::string name, std::string type)
+{
+    bool var_exist = this->is_var_in_stack(name);
+    if (var_exist)
+    {
+        output::errorDef(yylineno, name);
+        exit(0);
+    }
+
+    // update offset stack:
+    int curr_offset = this->offsets_stack.top();
+    curr_offset++;
+    this->offsets_stack.pop();
+    this->offsets_stack.push(curr_offset);
+
+    //update scopes_stack:
+    symbol_table curr_scope = this->scopes_stack.top();
+    curr_scope.add_entry(name, type, curr_offset);
+}
+
+void tabels_stack::assign(const Node* id, const Exp* exp)
+{
+    // check matching types
+    std::string id_name = id->getValue();
+    if(is_var_in_stack(id_name))
+    {
+        string id_type = this->get_var_type(id_name);
+        string exp_type = expTypeToString(exp.expType);
+
+    }
+}
+
+
+tabels_stack* tabels_stack::singleton_= nullptr;
+
+tabels_stack* tabels_stack::GetInstance() {
+    if(singleton_== nullptr){
+        singleton_ = new tabels_stack();
+    }
+    return singleton_;
+}
 
 
 // int main()
