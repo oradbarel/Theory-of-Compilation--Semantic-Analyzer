@@ -53,17 +53,17 @@ Statements:
     ;
 
 Statement:
-    LBRACE {TablesStack::GetInstance()->add_new_table();} Statements RBRACE {TablesStack::GetInstance()->remove_last_table();}
-    | Type ID SC { $$ = new Statement(dynamic_cast<Type*>$1, $2); }
-    | Type ID ASSIGN Exp SC { $$ = new Statement(dynamic_cast<Type*>$1, $2); TablesStack::GetInstance()->assign($2, dynamic_cast<Exp*>($4)) }
-    | ID ASSIGN Exp SC {TablesStack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
+    LBRACE { TablesStack::GetInstance()->add_new_table(); } Statements RBRACE { TablesStack::GetInstance()->remove_last_table(); }
+    | Type ID SC { $$ = new Statement(dynamic_cast<Type*>($1), $2); }
+    | Type ID ASSIGN Exp SC { $$ = new Statement(dynamic_cast<Type*>($1), $2); TablesStack::GetInstance()->assign($2, dynamic_cast<Exp*>($4)); }
+    | ID ASSIGN Exp SC { TablesStack::GetInstance()->assign($1, dynamic_cast<Exp*>($3)); }
     | Call SC {}
     | RETURN SC {}
-    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table();}
-    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table();} ELSE {TablesStack::GetInstance()->add_new_table();} Statement {TablesStack::GetInstance()->remove_last_table();}
-    | WHILE {TablesStack::GetInstance()->entered_while()} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->finished_while();}
-    | BREAK SC {TablesStack::GetInstance()->check_in_while("break");}
-    | CONTINUE SC {TablesStack::GetInstance()->check_in_while("continue");}
+    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); }
+    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); } ELSE {TablesStack::GetInstance()->add_new_table(); } Statement { TablesStack::GetInstance()->remove_last_table(); }
+    | WHILE { TablesStack::GetInstance()->entered_while(); } LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->finished_while(); }
+    | BREAK SC { TablesStack::GetInstance()->check_in_while("break"); }
+    | CONTINUE SC { TablesStack::GetInstance()->check_in_while("continue"); }
     ;
 
 Call:
@@ -71,29 +71,29 @@ Call:
     ;
 
 Type:
-    INT { $$ = new Type(INT); }
-    | BYTE { $$ = new Type(BYTE); }
-    | BOOL { $$ = new Type(BOOLEAN); }
+    INT { $$ = new Type(ExpType::INT); }
+    | BYTE { $$ = new Type(ExpType::BYTE); }
+    | BOOL { $$ = new Type(ExpType::BOOLEAN); }
     ;
 
 Exp:
-    LPAREN Exp RPAREN { $$ = new Exp(dynamic_cast<Exp*>($2))}
-    | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
-    | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
-    | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
-    | Exp DIV Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), ARITHMETIC); }
-    | ID { $$ = new Exp($1)}
-    | Call { $$ = new Exp(dynamic_cast<Call*>($1)) }
-    | NUM { $$ = new Exp(INT); }
-    | NUM B { $$ = new Exp(BYTE, $1); }
-    | STRING { $$ = new Exp(STRING); }
-    | TRUE { $$ = new Exp(BOOLEAN); }
-    | FALSE { $$ = new Exp(BOOLEAN); }
-    | NOT Exp { $$ = new Exp(dynamic_cast<Exp*>($2), LOGIC); }
-    | Exp AND Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), LOGIC); }
-    | Exp OR Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), LOGIC); }
-    | Exp EQUALITYOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), RELOP); }
-    | Exp RELATIONALOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), RELOP); }
+    LPAREN Exp RPAREN { $$ = new Exp(dynamic_cast<Exp*>($2)); }
+    | Exp PLUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::ARITHMETIC); }
+    | Exp MINUS Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::ARITHMETIC); }
+    | Exp MULT Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::ARITHMETIC); }
+    | Exp DIV Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::ARITHMETIC); }
+    | ID { $$ = new Exp($1); }
+    | Call { $$ = new Exp(dynamic_cast<Call*>($1)); }
+    | NUM { $$ = new Exp(ExpType::INT); }
+    | NUM B { $$ = new Exp(ExpType::BYTE, $1); }
+    | STRING { $$ = new Exp(ExpType::STRING); }
+    | TRUE { $$ = new Exp(ExpType::BOOLEAN); }
+    | FALSE { $$ = new Exp(ExpType::BOOLEAN); }
+    | NOT Exp { $$ = new Exp(dynamic_cast<Exp*>($2), OperatorType::LOGIC); }
+    | Exp AND Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::LOGIC); }
+    | Exp OR Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::LOGIC); }
+    | Exp EQUALITYOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::RELOP); }
+    | Exp RELATIONALOP Exp { $$ = new Exp(dynamic_cast<Exp*>($1), dynamic_cast<Exp*>($3), OperatorType::RELOP); }
     | LPAREN Type RPAREN Exp { $$ = new Exp(dynamic_cast<Exp*>($4), dynamic_cast<Type*>($2)); }
     ;
 %%
