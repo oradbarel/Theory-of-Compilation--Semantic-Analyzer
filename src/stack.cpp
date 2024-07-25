@@ -54,7 +54,7 @@ string SymbolTable::find_type(const string &name)
         if (entry->name == name)
             return entry->type;
     }
-    throw out_of_range("A variable with such a name does not exist");
+    throw out_of_range("In `find_type`: A variable with such a name does not exist");
 }
 
 void SymbolTable::print_all_entries()
@@ -126,7 +126,7 @@ BasicEntry &TablesStack::get_var_by_name(const std::string &name)
         }
         copiedStack.pop();
     }
-    throw out_of_range("A variable with such a name does not exist");
+    throw out_of_range("In `get_var_by_name`: A variable with such a name does not exist");
 }
 
 string TablesStack::get_var_type(const string &name)
@@ -141,7 +141,7 @@ string TablesStack::get_var_type(const string &name)
         }
         copiedStack.pop();
     }
-    throw out_of_range("A variable with such a name does not exist");
+    throw out_of_range("In `get_var_type`: A variable with such a name does not exist");
 }
 
 void TablesStack::add_var(const string &name, const string &type)
@@ -178,7 +178,16 @@ void TablesStack::assign(const classes::Node *id, const classes::Exp *exp)
         errorUndef(yylineno, id_name);
         exit(0);
     }
-    ExpType id_type = stringToExpType(this->get_var_type(id_name));
+    ExpType id_type;
+    try
+    {
+        id_type = stringToExpType(this->get_var_type(id_name));
+    }
+    catch(const std::out_of_range& e)
+    {
+        errorUndef(yylineno, id_name);
+        exit(0);
+    }
     if (!isImplicitCastingAllowd(exp->expType, id_type))
     {
         //cout << "print errorMismatch from assign with lineno" << yylineno << endl;

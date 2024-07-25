@@ -22,6 +22,8 @@ namespace classes
             return "BYTE";
         case ExpType::BOOLEAN:
             return "BOOL";
+        case ExpType::STRING:
+            return "STRING";
         default:
             ASSERT_UNEXPECTED_ERROR;
             return "";
@@ -81,8 +83,8 @@ namespace classes
     {
         return this->value;
     }
-    
-    void Node::setValue(const std::string& val)
+
+    void Node::setValue(const std::string &val)
     {
         this->value = val;
     }
@@ -161,8 +163,17 @@ namespace classes
         if (!TablesStack::GetInstance()->is_var_in_stack(varName))
         {
             errorUndef(yylineno, varName);
+            exit(0);
         }
-        this->expType = stringToExpType(TablesStack::GetInstance()->get_var_type(varName));
+        try
+        {
+            this->expType = stringToExpType(TablesStack::GetInstance()->get_var_type(varName));
+        }
+        catch (const std::out_of_range &e)
+        {
+            errorUndef(yylineno, varName);
+            exit(0);
+        }
     }
     Exp::Exp(const Call *call)
     {
@@ -182,12 +193,19 @@ namespace classes
         {
             ASSERT_UNEXPECTED_ERROR;
         }
-        if (stoi(node->getValue()) > MAX_BYTE)
+        try
         {
-            errorByteTooLarge(yylineno, node->getValue());
-            exit(0);
+            if (stoi(node->getValue()) <= MAX_BYTE)
+            {
+                this->expType = expType;
+                return;
+            }
         }
-        this->expType = expType;
+        catch (std::out_of_range)
+        {
+        }
+        errorByteTooLarge(yylineno, node->getValue());
+        exit(0);
     }
 
     Exp::Exp(const Exp *operand, OperatorType operatorType)
@@ -199,7 +217,7 @@ namespace classes
         }
         if (operand->expType != ExpType::BOOLEAN)
         {
-            //cout << "print errorMismatch from Exp(const Exp *operand, OperatorType operatorType) with lineno" << yylineno << endl;
+            // cout << "print errorMismatch from Exp(const Exp *operand, OperatorType operatorType) with lineno" << yylineno << endl;
             errorMismatch(yylineno); // TODO: check in piazza what to print...
             exit(0);
         }
@@ -252,7 +270,7 @@ namespace classes
             return;
             break;
         }
-        //cout << "print errorMismatch with lineno" << yylineno << ". o1:" << int(operand1->expType) << ". o2:" << int(operand2->expType) << endl;
+        // cout << "print errorMismatch with lineno" << yylineno << ". o1:" << int(operand1->expType) << ". o2:" << int(operand2->expType) << endl;
         errorMismatch(yylineno); // TODO: check in piazza what to print...
         exit(0);
     }
@@ -264,9 +282,9 @@ namespace classes
             ASSERT_UNEXPECTED_ERROR;
             return;
         }
-        if (!operand->isNumExp() && !type->isNum())
+        if (!operand->isNumExp() || !type->isNum())
         {
-            //cout << "print errorMismatch from Exp(const Exp *operand, const Type *type) with lineno" << yylineno << endl;
+            // cout << "print errorMismatch from Exp(const Exp *operand, const Type *type) with lineno" << yylineno << endl;
             errorMismatch(yylineno); // TODO: check in piazza what to print...
             exit(0);
         }
@@ -282,11 +300,10 @@ namespace classes
     {
         if (this->expType != ExpType::BOOLEAN)
         {
-            //cout << "print errorMismatch from validateIsBoolean with lineno" << yylineno << endl;
+            // cout << "print errorMismatch from validateIsBoolean with lineno" << yylineno << endl;
             errorMismatch(yylineno);
             exit(0);
         }
-        
     }
     // -----
 }
