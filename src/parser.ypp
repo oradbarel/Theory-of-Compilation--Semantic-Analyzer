@@ -44,7 +44,7 @@
 
 %%
 Program:
-    Statements {}
+    Statements CloseScope{}
     ;
 
 Statements:

@@ -1,4 +1,4 @@
-// #define NDEBUG
+#define NDEBUG
 #include <cassert>
 #include "classes.hpp"
 #include "stack.hpp"
@@ -197,7 +197,7 @@ namespace classes
             ASSERT_UNEXPECTED_ERROR;
             return;
         }
-        if (operand->expType == ExpType::BOOLEAN)
+        if (operand->expType != ExpType::BOOLEAN)
         {
             //cout << "print errorMismatch from Exp(const Exp *operand, OperatorType operatorType) with lineno" << yylineno << endl;
             errorMismatch(yylineno); // TODO: check in piazza what to print...

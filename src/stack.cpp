@@ -70,9 +70,9 @@ void SymbolTable::print_all_entries()
 TablesStack::TablesStack()
 {
     SymbolTable global_tabel;
-    global_tabel.add_entry("print", makeFunctionType("string", "void"), 0);
-    global_tabel.add_entry("printi", makeFunctionType("int", "void"), 0);
-    global_tabel.add_entry("readi", makeFunctionType("int", "int"), 0);
+    global_tabel.add_entry("print", makeFunctionType("STRING", "VOID"), 0);
+    global_tabel.add_entry("printi", makeFunctionType("INT", "VOID"), 0);
+    global_tabel.add_entry("readi", makeFunctionType("INT", "INT"), 0);
     scopes_stack.push(global_tabel);
     offsets_stack.push(0);
 }
@@ -153,6 +153,12 @@ void TablesStack::add_var(const string &name, const string &type)
         exit(0);
     }
 
+    int curr_offset = this->offsets_stack.top();
+    this->offsets_stack.pop();
+    this->scopes_stack.top().add_entry(name, type, curr_offset);
+    this->offsets_stack.push(curr_offset + 1);
+
+    /*
     // update offset stack:
     int curr_offset = this->offsets_stack.top();
     curr_offset++;
@@ -161,6 +167,7 @@ void TablesStack::add_var(const string &name, const string &type)
 
     // update scopes_stack:
     this->scopes_stack.top().add_entry(name, type, curr_offset);
+    */
 }
 
 void TablesStack::assign(const classes::Node *id, const classes::Exp *exp)
