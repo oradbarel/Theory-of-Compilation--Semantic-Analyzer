@@ -47,6 +47,19 @@ ExpType classes::stringToExpType(const string& type)
     }
 }
 
+bool classes::isImplicitCastingAllowd(ExpType fromType, ExpType toType)
+{
+    if (fromType == toType)
+    {
+        return true;
+    }
+    if (fromType == ExpType::BYTE && toType == ExpType::INT)
+    {
+        return true;
+    }
+    return false;
+}
+
 // -----
 // ----- Class Node:
 
@@ -68,7 +81,21 @@ std::string Node::getValue() const
 }
 
 // -----
+// ----- Class Statement:
 
+Statement::Statement(const Type *type, const Node *id)
+{
+    if (!type || !id)
+    {
+        ASSERT_UNEXPECTED_ERROR;
+        return;
+    }
+    this->type = type->getType();
+    this->setValue(id->getValue());
+    TablesStack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
+}
+
+// -----
 // ----- Class Call:
 
 Call::Call(const Node *func, const Exp *arg)
@@ -125,11 +152,11 @@ Exp::Exp(const Node *id)
         return;
     }
     string varName = id->getValue();
-    if (!tabels_stack::GetInstance()->is_var_in_stack(varName))
+    if (!TablesStack::GetInstance()->is_var_in_stack(varName))
     {
         errorUndef(yylineno, varName);
     }
-    this->expType = stringToExpType(tabels_stack::GetInstance()->get_var_type(varName));
+    this->expType = stringToExpType(TablesStack::GetInstance()->get_var_type(varName));
 }
 Exp::Exp(const Call *call)
 {
@@ -241,15 +268,4 @@ bool Exp::isNumExp() const
     return this->expType == ExpType::INT || this->expType == ExpType::BYTE;
 }
 
-// ----- Class Statement:
-Statement::Statement(const Type *type, const Node *id)
-{
-    if (!type || !id)
-    {
-        ASSERT_UNEXPECTED_ERROR;
-        return;
-    }
-    this->type = type->getType();
-    this->setValue(id->getValue());
-    tabels_stack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
-}
+// -----

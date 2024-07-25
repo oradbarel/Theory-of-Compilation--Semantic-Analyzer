@@ -53,17 +53,17 @@ Statements:
     ;
 
 Statement:
-    LBRACE {tabels_stack::GetInstance()->add_new_table();} Statements RBRACE {tabels_stack::GetInstance()->remove_last_table();}
-    | Type ID SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
-    | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2); tabels_stack::GetInstance()->assign($2, dynamic_cast<Exp*>($4))}
-    | ID ASSIGN Exp SC {tabels_stack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
+    LBRACE {TablesStack::GetInstance()->add_new_table();} Statements RBRACE {TablesStack::GetInstance()->remove_last_table();}
+    | Type ID SC { $$ = new Statement(dynamic_cast<Type*>$1, $2); }
+    | Type ID ASSIGN Exp SC { $$ = new Statement(dynamic_cast<Type*>$1, $2); TablesStack::GetInstance()->assign($2, dynamic_cast<Exp*>($4)) }
+    | ID ASSIGN Exp SC {TablesStack::GetInstance()->assign($1, dynamic_cast<Exp*>($3))}
     | Call SC {}
     | RETURN SC {}
-    | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();}
-    | IF {tabels_stack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->remove_last_table();} ELSE {tabels_stack::GetInstance()->add_new_table();} Statement {tabels_stack::GetInstance()->remove_last_table();}
-    | WHILE {tabels_stack::GetInstance()->entered_while()} LPAREN Exp RPAREN Statement {tabels_stack::GetInstance()->finished_while();}
-    | BREAK SC {tabels_stack::GetInstance()->check_in_while("break");}
-    | CONTINUE SC {tabels_stack::GetInstance()->check_in_while("continue");}
+    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table();}
+    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table();} ELSE {TablesStack::GetInstance()->add_new_table();} Statement {TablesStack::GetInstance()->remove_last_table();}
+    | WHILE {TablesStack::GetInstance()->entered_while()} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->finished_while();}
+    | BREAK SC {TablesStack::GetInstance()->check_in_while("break");}
+    | CONTINUE SC {TablesStack::GetInstance()->check_in_while("continue");}
     ;
 
 Call:

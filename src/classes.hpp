@@ -53,6 +53,7 @@ namespace classes
 
     std::string expTypeToString(ExpType type);
     ExpType stringToExpType(const string& type);
+    bool isImplicitCastingAllowd(ExpType fromType, ExpType toType);
 
     // ----- Classes:
 
