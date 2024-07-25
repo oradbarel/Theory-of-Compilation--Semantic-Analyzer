@@ -66,11 +66,14 @@ Statement:
     | CONTINUE SC { TablesStack::GetInstance()->check_in_while("continue"); }
     ;
 
-ValidateBool: Exp { dynamic_cast<Exp*>($1)->validateIsBoolean(); }
+ValidateBool:
+    Exp { dynamic_cast<Exp*>($1)->validateIsBoolean(); }
 
-OpenScope: { TablesStack::GetInstance()->add_new_table(); }
+OpenScope:
+    { TablesStack::GetInstance()->add_new_table(); }
 
-CloseScope: { TablesStack::GetInstance()->remove_last_table(); }
+CloseScope:
+    { TablesStack::GetInstance()->remove_last_table(); }
 
 Call:
     ID LPAREN Exp RPAREN { $$ = new Call($1, dynamic_cast<Exp*>($3)); }
