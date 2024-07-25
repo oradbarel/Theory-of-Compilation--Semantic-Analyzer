@@ -81,7 +81,11 @@ namespace classes
     {
         return this->value;
     }
-
+    
+    void Node::setValue(const std::string& val)
+    {
+        this->value = val;
+    }
     // -----
     // ----- Class Statement:
 

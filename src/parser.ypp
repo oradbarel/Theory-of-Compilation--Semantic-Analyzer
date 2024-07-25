@@ -59,13 +59,18 @@ Statement:
     | ID ASSIGN Exp SC { TablesStack::GetInstance()->assign($1, dynamic_cast<Exp*>($3)); }
     | Call SC {}
     | RETURN SC {}
-    | IF LPAREN Exp RPAREN Statement { dynamic_cast<Exp*>($3).validateIsBoolean() /*TODO: close scope of if and print all its vars. */ }
-    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); }
-    | IF {TablesStack::GetInstance()->add_new_table();} LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->remove_last_table(); } ELSE {TablesStack::GetInstance()->add_new_table(); } Statement { TablesStack::GetInstance()->remove_last_table(); }
-    | WHILE { TablesStack::GetInstance()->entered_while(); } LPAREN Exp RPAREN Statement {TablesStack::GetInstance()->finished_while(); }
+    | IF LPAREN Exp RPAREN ValidateBool OpenScope Statement CloseScope
+    | IF LPAREN Exp RPAREN ValidateBool OpenScope Statement CloseScope ELSE OpenScope Statement CloseScope
+    | WHILE { TablesStack::GetInstance()->entered_while(); } LPAREN Exp RPAREN ValidateBool Statement {TablesStack::GetInstance()->finished_while(); }
     | BREAK SC { TablesStack::GetInstance()->check_in_while("break"); }
     | CONTINUE SC { TablesStack::GetInstance()->check_in_while("continue"); }
     ;
+
+ValidateBool: Exp { dynamic_cast<Exp*>($1)->validateIsBoolean(); }
+
+OpenScope: { TablesStack::GetInstance()->add_new_table(); }
+
+CloseScope: { TablesStack::GetInstance()->remove_last_table(); }
 
 Call:
     ID LPAREN Exp RPAREN { $$ = new Call($1, dynamic_cast<Exp*>($3)); }

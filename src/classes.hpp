@@ -72,7 +72,7 @@ namespace classes
         Node(const Node *other);
         virtual ~Node() = default;
         std::string getValue() const;
-        void setValue(std::string val);
+        void setValue(const std::string& val);
         // OperatorType operatorType() const;
     };
 
@@ -91,6 +91,7 @@ namespace classes
     };
 
     class Type;
+    class Exp;
     class Statement : public Node
     {
     public:
@@ -100,7 +101,6 @@ namespace classes
         ~Statement() = default;
     };
 
-    class Exp;
     class Call : public Node
     {
     private:
