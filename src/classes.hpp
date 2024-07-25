@@ -20,8 +20,6 @@ namespace classes
         VOID
     };
 
-    std::string expTypeToString(ExpType type);
-
     enum class OperatorType
     {
         LOGIC,
@@ -41,30 +39,18 @@ namespace classes
         ExpType retType;
     } Func;
 
-    // const struct {
-    //     Func printFunc = {
-    //         "print",
-    //         ExpType::STRING,
-    //         ExpType::VOID
-    //     };
-    //     Func printiFunc = {
-    //         "printi",
-    //         ExpType::INT,
-    //         ExpType::VOID
-    //     };
-    //     Func readiFunc = {
-    //         "readi",
-    //         ExpType::INT,
-    //         ExpType::INT
-    //     };
-    // } Functions;
-
     const std::map<std::string, Func> FUNCTIONS = {
         {"print", {"print", {ExpType::STRING}, ExpType::VOID}},
         {"printi", {"printi", {ExpType::INT, ExpType::BYTE}, ExpType::VOID}},
         {"reai", {"readi", {ExpType::INT, ExpType::BYTE}, ExpType::INT}}};
 
     // -----
+
+    // ----- Helper Functions:
+    // -----
+    
+    std::string expTypeToString(ExpType type);
+
     // ----- Classes:
 
     /**
