@@ -44,7 +44,7 @@ namespace classes
     const std::map<std::string, Func> FUNCTIONS = {
         {"print", {"print", {ExpType::STRING}, ExpType::VOID}},
         {"printi", {"printi", {ExpType::INT, ExpType::BYTE}, ExpType::VOID}},
-        {"reai", {"readi", {ExpType::INT, ExpType::BYTE}, ExpType::INT}}};
+        {"readi", {"readi", {ExpType::INT, ExpType::BYTE}, ExpType::INT}}};
 
     // -----
 
