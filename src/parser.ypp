@@ -2,6 +2,7 @@
     #include <iostream>
     #include "hw3_output.hpp"
     #include "classes.hpp"
+    #includa "stack.hpp"
 
     extern int yylex();
     extern int yylineno;
@@ -53,8 +54,8 @@ Statements:
 
 Statement:
     LBRACE Statements RBRACE {}
-    | Type ID SC {}
-    | Type ID ASSIGN Exp SC {}
+    | Type ID SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
+    | Type ID ASSIGN Exp SC {$$= new Statement(dynamic_cast<Type*>$1, $2);}
     | ID ASSIGN Exp SC {}
     | Call SC {}
     | RETURN SC {}

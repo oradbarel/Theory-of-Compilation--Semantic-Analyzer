@@ -1,7 +1,24 @@
 #include "classes.hpp"
+#include "stack.hpp"
 
 using namespace std;
 using namespace classes;
+
+// ----- enums
+std::string expTypeToString(ExpType type)
+{
+    switch (type)
+    {
+    case ExpType::INT:
+        return "INT";
+    case ExpType::BYTE:
+        return "BYTE";
+    case ExpType::BOOLEAN:
+        return "BOOL";
+    default:
+        exit(0);
+    }
+}
 
 // ----- Class Node:
 
@@ -22,8 +39,8 @@ std::string Node::getValue() const
     return this->value;
 }
 
+void Node::setValue(std::string val) {value = val;}
 
-// -----
 
 // ----- Class Type:
 
@@ -156,4 +173,19 @@ bool Exp::isNumExp() const
     return this->expType == ExpType::INT || this->expType == ExpType::BYTE;
 }
 
-// -----
+
+
+// ----- Class Statement:
+Statement::Statement(const Type* type, const Node* id)
+{
+    if (type && id)
+    {
+        this->type = type->getType();
+        this->setValue(id->getValue());
+        tabels_stack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
+    }
+    else
+    {
+        //handle error
+    }
+}

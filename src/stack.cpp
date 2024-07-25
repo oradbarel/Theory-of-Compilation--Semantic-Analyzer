@@ -5,7 +5,6 @@
 
 using namespace std;
 
-
 // --------- nethods for entry ---------
 
 basic_entry::basic_entry(std::string name, std::string type, int offset)
@@ -67,17 +66,19 @@ tabels_stack::tabels_stack()
     global_tabel.add_entry("printi", output::makeFunctionType("int", "void"), 0);
     global_tabel.add_entry("readi", output::makeFunctionType("int", "int"), 0);
     scopes_stack.push(global_tabel);
+    offsets_stack.push(0); // maybe should be 1?
 }
 
 void tabels_stack::add_new_table()
 {
     symbol_table new_table;
     scopes_stack.push(new_table);
+    offsets_stack.push(0);
 } 
 
 void tabels_stack::remove_last_table()
 {
-    if (scopes_stack.empty())
+    if (scopes_stack.empty() || offsets_stack.empty())
     {
         std::cout << "error: no tabels (scopes) in the stack" << std::endl;
         exit(0);
@@ -85,9 +86,50 @@ void tabels_stack::remove_last_table()
     output::endScope();
     symbol_table current_scope = scopes_stack.top();
     current_scope.print_all_entries();
-    scopes_stack.pop(); //should we first print all the variables in the scope?    
+    scopes_stack.pop();
+    offsets_stack.pop();  
 }
 
+void tabels_stack::add_var(std::string name, std::string type)
+{
+    // update offset stack:
+    int curr_offset = this->offsets_stack.top();
+    curr_offset++;
+    this->offsets_stack.pop();
+    this->offsets_stack.push(curr_offset);
+
+    //update scopes_stack:
+    symbol_table curr_scope = this->scopes_stack.top();
+    curr_scope.add_entry(name, type, curr_offset);
+}
+
+bool tabels_stack::is_var_in_stack(string name)
+{
+    bool found_var = false;
+    std::stack<symbol_table> copiedStack(this->scopes_stack);
+    while (!copiedStack.empty()) 
+    {
+        symbol_table curr_table = copiedStack.top();
+        if (curr_table.is_entry_in_table(name))
+        {
+            return true;
+        }
+        copiedStack.pop();
+    }
+    return false;
+}
+
+
+
+
+tabels_stack* tabels_stack::singleton_= nullptr;
+
+tabels_stack* tabels_stack::GetInstance() {
+    if(singleton_== nullptr){
+        singleton_ = new tabels_stack();
+    }
+    return singleton_;
+}
 
 
 // int main()
