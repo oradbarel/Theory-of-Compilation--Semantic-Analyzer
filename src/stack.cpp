@@ -160,8 +160,7 @@ void TablesStack::add_var(const string &name, const string &type)
     this->offsets_stack.push(curr_offset);
 
     // update scopes_stack:
-    SymbolTable curr_scope = this->scopes_stack.top();
-    curr_scope.add_entry(name, type, curr_offset);
+    this->scopes_stack.top().add_entry(name, type, curr_offset);
 }
 
 void TablesStack::assign(const classes::Node *id, const classes::Exp *exp)
@@ -175,6 +174,7 @@ void TablesStack::assign(const classes::Node *id, const classes::Exp *exp)
     ExpType id_type = stringToExpType(this->get_var_type(id_name));
     if (!isImplicitCastingAllowd(exp->expType, id_type))
     {
+        //cout << "print errorMismatch from assign with lineno" << yylineno << endl;
         errorMismatch(yylineno);
         exit(0);
     }

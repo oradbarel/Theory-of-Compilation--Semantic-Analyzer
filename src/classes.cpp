@@ -199,6 +199,7 @@ namespace classes
         }
         if (operand->expType == ExpType::BOOLEAN)
         {
+            //cout << "print errorMismatch from Exp(const Exp *operand, OperatorType operatorType) with lineno" << yylineno << endl;
             errorMismatch(yylineno); // TODO: check in piazza what to print...
             exit(0);
         }
@@ -225,6 +226,7 @@ namespace classes
         case OperatorType::RELOP:
             if (operand1->isNumExp() && operand2->isNumExp())
             {
+                // cout << "enter if with lineno " << yylineno << endl;
                 this->expType = ExpType::BOOLEAN;
                 return;
             }
@@ -250,6 +252,7 @@ namespace classes
             return;
             break;
         }
+        //cout << "print errorMismatch with lineno" << yylineno << ". o1:" << int(operand1->expType) << ". o2:" << int(operand2->expType) << endl;
         errorMismatch(yylineno); // TODO: check in piazza what to print...
         exit(0);
     }
@@ -263,6 +266,7 @@ namespace classes
         }
         if (!operand->isNumExp() && !type->isNum())
         {
+            //cout << "print errorMismatch from Exp(const Exp *operand, const Type *type) with lineno" << yylineno << endl;
             errorMismatch(yylineno); // TODO: check in piazza what to print...
             exit(0);
         }
@@ -278,6 +282,7 @@ namespace classes
     {
         if (this->expType != ExpType::BOOLEAN)
         {
+            //cout << "print errorMismatch from validateIsBoolean with lineno" << yylineno << endl;
             errorMismatch(yylineno);
             exit(0);
         }
