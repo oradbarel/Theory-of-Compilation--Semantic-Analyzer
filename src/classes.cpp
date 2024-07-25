@@ -1,6 +1,7 @@
 #include "classes.hpp"
 
 using namespace std;
+using namespace output;
 using namespace classes;
 
 // ----- Class Node:
@@ -15,6 +16,7 @@ Node::Node(const Node *other)
     {
         this->value = other->value;
     }
+    
 }
 
 std::string Node::getValue() const
@@ -22,6 +24,32 @@ std::string Node::getValue() const
     return this->value;
 }
 
+// -----
+
+// ----- Class Call:
+
+Call::Call(const Node* func, const Exp* arg)
+{
+    auto funcIter = FUNCTIONS.find(func->getValue());
+    if (funcIter == FUNCTIONS.end())
+    {
+        // Hadle error - function does not exist
+        errorUndefFunc(yylineno, func->getValue());
+        exit(0);
+    }
+    else if (funcIter->second.argTypes.find(arg->expType) == funcIter->second.argTypes.end())
+    {
+        // Handle error - arg mismatch
+        auto x = *funcIter->second.argTypes.begin();
+        errorPrototypeMismatch(yylineno, funcIter->first, *funcIter->second.argTypes.begin());
+        exit(0);
+    }
+    else
+    {
+        this->retType = funcIter->second.retType;
+        // TODO: Maybe more code regarding the new scope...
+    }
+}
 
 // -----
 
