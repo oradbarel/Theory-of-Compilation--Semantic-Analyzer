@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="" width="250" align="center">
+  <img src="https://github.com/oradbarel/Theory-of-Compilation--Syntax-Analyzer/blob/main/assets/Computer%20Bison.png?raw=true" width="250" align="center">
   <br>
   <br>
   Theory-of-Compilation--Semantic-Analyzer
