@@ -14,7 +14,7 @@ public:
     int offset;
 
     BasicEntry(const std::string &name, const std::string &type, int offset);
-    void print_entry();
+    void printEntry() const;
 };
 
 class SymbolTable
@@ -22,11 +22,11 @@ class SymbolTable
 public:
     std::vector<BasicEntry> entries_vector;
 
-    void add_entry(const std::string &name, const std::string &type, int offset);
-    bool is_entry_in_table(const std::string &name);
-    std::vector<BasicEntry>::iterator get_entry_from_table(const string &name);
-    std::string find_type(const std::string &name);
-    void print_all_entries();
+    void addEntry(const std::string &name, const std::string &type, int offset);
+    bool isEntryInTable(const std::string &name);
+    std::vector<BasicEntry>::iterator getEntryFromTable(const string &name);
+    std::string findType(const std::string &name);
+    void printAllEntries() const;
 };
 
 class TablesStack
@@ -37,24 +37,24 @@ public:
     bool in_while = false;
 
     static TablesStack *singleton_;
-    static TablesStack *GetInstance();
+    static TablesStack *getInstance();
     TablesStack();
-    void add_new_table();
-    void remove_last_table();
-    void add_var(const std::string &name, const std::string &type);
-    bool is_var_in_stack(const std::string &name);
+    void addNewTable();
+    void removeLastTable();
+    void addVar(const std::string &name, const std::string &type);
+    bool isVarInStack(const std::string &name);
     /**
      * This method will throw an `out_of_range` error in case no such variable exists.
      */
-    std::string get_var_type(const std::string &name);
+    std::string getVarType(const std::string &name);
     /**
      * This method will throw an `out_of_range` error in case no such variable exists.
      */
-    BasicEntry& get_var_by_name(const std::string &name);
+    BasicEntry& getVarByName(const std::string &name);
     void assign(const classes::Node *id, const classes::Exp *exp);
-    void entered_while();
-    void finished_while();
-    void check_in_while(const std::string &command);
+    void enteredWhile();
+    void finishedWhile();
+    void checkInWhile(const std::string &command);
 };
 
 #endif // _236360_3_STACK_

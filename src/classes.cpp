@@ -100,7 +100,7 @@ namespace classes
         }
         this->type = type->getType();
         this->setValue(id->getValue());
-        TablesStack::GetInstance()->add_var(this->getValue(), expTypeToString(this->type));
+        TablesStack::getInstance()->addVar(this->getValue(), expTypeToString(this->type));
     }
 
     // -----
@@ -121,7 +121,6 @@ namespace classes
             exit(0);
         }
         this->retType = funcIter->second.retType;
-        // TODO: Maybe more code regarding the new scope...
     }
 
     // ----- Class Type:
@@ -160,14 +159,14 @@ namespace classes
             return;
         }
         string varName = id->getValue();
-        if (!TablesStack::GetInstance()->is_var_in_stack(varName))
+        if (!TablesStack::getInstance()->isVarInStack(varName))
         {
             errorUndef(yylineno, varName);
             exit(0);
         }
         try
         {
-            this->expType = stringToExpType(TablesStack::GetInstance()->get_var_type(varName));
+            this->expType = stringToExpType(TablesStack::getInstance()->getVarType(varName));
         }
         catch (const std::out_of_range &e)
         {
@@ -218,7 +217,7 @@ namespace classes
         if (operand->expType != ExpType::BOOLEAN)
         {
             // cout << "print errorMismatch from Exp(const Exp *operand, OperatorType operatorType) with lineno" << yylineno << endl;
-            errorMismatch(yylineno); // TODO: check in piazza what to print...
+            errorMismatch(yylineno);
             exit(0);
         }
         this->expType = ExpType::BOOLEAN;
@@ -271,7 +270,7 @@ namespace classes
             break;
         }
         // cout << "print errorMismatch with lineno" << yylineno << ". o1:" << int(operand1->expType) << ". o2:" << int(operand2->expType) << endl;
-        errorMismatch(yylineno); // TODO: check in piazza what to print...
+        errorMismatch(yylineno);
         exit(0);
     }
 
@@ -285,7 +284,7 @@ namespace classes
         if (!operand->isNumExp() || !type->isNum())
         {
             // cout << "print errorMismatch from Exp(const Exp *operand, const Type *type) with lineno" << yylineno << endl;
-            errorMismatch(yylineno); // TODO: check in piazza what to print...
+            errorMismatch(yylineno);
             exit(0);
         }
         this->expType = type->getType();
